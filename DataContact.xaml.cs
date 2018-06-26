@@ -20,16 +20,11 @@ namespace SerialPort
     /// <summary>
     /// 可用于自身或导航至 Frame 内部的空白页。
     /// </summary>
-    public sealed partial class StatusFrame : Page
+    public sealed partial class DataContact : Page
     {
-        public StatusFrame()
+        public DataContact()
         {
             this.InitializeComponent();
-        }
-
-        private void Hall_Click(object sender, RoutedEventArgs e)
-        {
-
         }
     }
 }
