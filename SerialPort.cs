@@ -5,9 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Devices.Enumeration;
 using Windows.Devices.SerialCommunication;
+using Windows.Foundation;
 using Windows.Storage.Streams;
-
-
+using Windows.UI.Popups;
+using SerialPort;
 namespace SerialPort
 {
     ////////////////////////////////////////////////////////////////////////////
@@ -35,9 +36,48 @@ namespace SerialPort
             //get a list of devices from the given portname
             string selector = SerialDevice.GetDeviceSelector(portName);
 
-
+            // Get a list of devices that match the given name
             DeviceInformationCollection devices = await DeviceInformation.FindAllAsync(selector);
 
+            // If any device found...
+            if (devices.Any())
+            {
+                // Get first device (should be only device)
+                DeviceInformation deviceInfo = devices.First();
+
+                // Create a serial port device from the COM port device ID
+                this.SerialDevice = await SerialDevice.FromIdAsync(deviceInfo.Id);
+
+                // If serial device is valid...
+                if (this.SerialDevice != null)
+                {
+                    // Setup serial port configuration
+                    this.SerialDevice.StopBits = stopBits;
+                    this.SerialDevice.Parity = parity;
+                    this.SerialDevice.BaudRate = baudRate;
+                    this.SerialDevice.DataBits = dataBits;
+
+                    // Create a single device writer for this port connection
+                    this.dataWriterObject = new DataWriter(this.SerialDevice.OutputStream);
+
+                    // Create a single device reader for this port connection
+                    this.dataReaderObject = new DataReader(this.SerialDevice.InputStream);
+
+                    // Allow partial reads of the input stream
+                    this.dataReaderObject.InputStreamOptions = InputStreamOptions.Partial;
+
+
+                    ////弹出提示框,    此处为了查看是否连接端口
+                    //MessageDialog message_dialog = new MessageDialog(portName, "退出");
+                    //message_dialog.ShowAsync();   //不加await修饰符, No异步编程
+                    StatusFrame statusFrame = new StatusFrame();
+                
+                    // Port is now open
+                    this.IsOpen = true;
+                }
+
+            }
+         
             return this.IsOpen;
         }
 
@@ -84,6 +124,69 @@ namespace SerialPort
             //Port now closed
             this.IsOpen = false;
         }
+
+        ////////////////////////////////////////////////////////////////////////
+        /// <summary>
+        /// Write data to the open COM port
+        /// 写入数据
+        /// </summary>
+        /// <param name="data">Array of data byes to be written</param>
+        public async void WriteAsync(byte[] data)
+        {
+            // Write block of data to serial port
+            this.dataWriterObject.WriteBytes(data);
+
+            // Transfer data to the serial device now
+            await this.dataWriterObject.StoreAsync();
+
+            // Flush the data out to the serial device now
+            await this.dataWriterObject.FlushAsync();
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        /// <summary>
+        /// Read a byte from the open COM port
+        /// 读出数据
+        /// </summary>
+        /// <returns>The next byte received by the specified port</returns>
+        public byte ReadByte()
+        {
+            // Get the next byte of data from the port
+            return (byte)this.dataReaderObject.ReadByte();
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        /// <summary>
+        /// Return the number of bytes to read from COM port
+        /// </summary>
+        public uint BytesToRead(uint bufferSize)
+        {
+            // Load buffer of bytes from port
+            LoadSerialDataAsync(bufferSize);
+
+            // Total bytes to read are those unconsumed from the port
+            return this.dataReaderObject.UnconsumedBufferLength;
+        }
+
+        ////////////////////////////////////////////////////////////////////////
+        /// <summary>
+        /// Load serial data from the serial port
+        /// </summary>
+        public void LoadSerialDataAsync(uint bufferSize)
+        {
+            // If no data left to consume in buffer...
+            if (dataReaderObject.UnconsumedBufferLength == 0)
+            {
+                try
+                {
+                    IAsyncOperation<uint> taskLoad = dataReaderObject.LoadAsync(bufferSize);
+                    taskLoad.AsTask().Wait(0);
+                }
+                // Dump exceptions
+                catch { }
+            }
+        }
+
 
         /////////////////////////////////////////////////////////////
         /// <summary>

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -25,6 +26,15 @@ namespace SerialPort
         public StatusFrame()
         {
             this.InitializeComponent();
+            SerialPort serialPort = new SerialPort();
+            string portName = "COM";
+            for (int i = 0; i < 10; i++)
+            {
+                portName += i.ToString();
+                serialPort.Open(portName);
+                portName = "COM";
+            }
+            PortStutas.Text = "COM4";
         }
 
         private void Hall_Click(object sender, RoutedEventArgs e)
