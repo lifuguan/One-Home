@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
+using Windows.UI.Popups;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -37,27 +38,34 @@ namespace SerialPort
             }
             
         }
-        
+        /// <summary>
+        /// 控制显示COM UI的函数
+        /// </summary>
         public void PortStatusContral(string PortName)
         {
-            PortStutas.Text = PortName;    //问题
+            //PortStutas.Text = PortName;    //问题
         }
 
 
         private void Hall_Click(object sender, RoutedEventArgs e)
         {
-            
+            /// <summary>
+            /// Debug专用提示窗
+            /// </summary>           
+            MessageDialog message_dialog = new MessageDialog(ReadDataStream(), "退出");
+            message_dialog.ShowAsync();   //不加await修饰符, No异步编程
         }
 
         private void RoomAlpha_Click(object sender, RoutedEventArgs e)
         {
-            
-            
-            uint length = serialPort.BytesToRead(1);
-            int asciiCode = serialPort.ReadByte();   //return single string's ASCII code
-            string resString = AsciiToChar(asciiCode);
-            int i = 1;
+                        
         }
+        
+
+
+        /// <summary>
+        /// C# ASCIIcode转string符
+        /// </summary>
         public static string AsciiToChar(int asciiCode)
         {
             if (asciiCode >= 0 && asciiCode <= 255)
@@ -72,5 +80,37 @@ namespace SerialPort
                 throw new Exception("ASCII Code is not valid.");
             }
         }
+
+
+
+        public string ReadDataStream()
+        {
+            string resString = "";
+            int asciiCode = 0;
+            do
+            {
+                uint length = serialPort.BytesToRead(1);
+                asciiCode = serialPort.ReadByte();   //return single string's ASCII code
+
+                if (AsciiToChar(asciiCode) == ";")
+                {
+                    /// <summary>
+                    /// Debug专用提示窗
+                    /// </summary>
+                    ////弹出提示框
+                    //MessageDialog message_dialog = new MessageDialog(resString, "退出");
+                    //message_dialog.ShowAsync();   //不加await修饰符, No异步编程
+
+
+                    return resString;
+                }
+                else
+                {
+                    resString += AsciiToChar(asciiCode);
+                }
+            } while (AsciiToChar(asciiCode) != ";");
+            return "";
+        }
+
     }
 }

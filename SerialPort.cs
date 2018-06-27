@@ -8,9 +8,19 @@ using Windows.Devices.SerialCommunication;
 using Windows.Foundation;
 using Windows.Storage.Streams;
 using Windows.UI.Popups;
-using SerialPort;
+
 namespace SerialPort
 {
+   
+
+
+
+
+
+
+
+
+
     ////////////////////////////////////////////////////////////////////////////
     /// <summary>
     /// Abstracted COM port interface suitable for UWP applications
