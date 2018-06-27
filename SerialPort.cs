@@ -67,11 +67,13 @@ namespace SerialPort
                     this.dataReaderObject.InputStreamOptions = InputStreamOptions.Partial;
 
 
-                    ////弹出提示框,    此处为了查看是否连接端口
-                    //MessageDialog message_dialog = new MessageDialog(portName, "退出");
-                    //message_dialog.ShowAsync();   //不加await修饰符, No异步编程
+                    //弹出提示框,    此处为了查看是否连接端口
+                    MessageDialog message_dialog = new MessageDialog(portName, "退出");
+                    message_dialog.ShowAsync();   //不加await修饰符, No异步编程
+
                     StatusFrame statusFrame = new StatusFrame();
-                
+                    statusFrame.PortStatusContral(portName);
+
                     // Port is now open
                     this.IsOpen = true;
                 }

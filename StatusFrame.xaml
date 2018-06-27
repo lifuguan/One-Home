@@ -12,7 +12,7 @@
             <Button Name = "Hall" Content="大厅" FontSize="40" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="Hall_Click"/>
         </Border>
         <Border BorderBrush="Green" BorderThickness="2"  HorizontalAlignment="Left" Height="166" Margin="188,240,0,0" VerticalAlignment="Top" Width="187">
-            <Button Name = "RoomAlpha" Content="房间1" FontSize="30" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <Button Name = "RoomAlpha" Content="房间1" FontSize="30" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Click="RoomAlpha_Click"/>
         </Border>
         <Border BorderBrush="Green" BorderThickness="2"  HorizontalAlignment="Left" Height="175" Margin="460,470,0,0" VerticalAlignment="Top" Width="165">
             <Button Name = "RoomBravo" Content="房间2" FontSize="30" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>

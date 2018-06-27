@@ -23,10 +23,11 @@ namespace SerialPort
     /// </summary>
     public sealed partial class StatusFrame : Page
     {
+        SerialPort serialPort = new SerialPort();
         public StatusFrame()
         {
+            
             this.InitializeComponent();
-            SerialPort serialPort = new SerialPort();
             string portName = "COM";
             for (int i = 0; i < 10; i++)
             {
@@ -34,12 +35,42 @@ namespace SerialPort
                 serialPort.Open(portName);
                 portName = "COM";
             }
-            PortStutas.Text = "COM4";
+            
         }
+        
+        public void PortStatusContral(string PortName)
+        {
+            PortStutas.Text = PortName;    //问题
+        }
+
 
         private void Hall_Click(object sender, RoutedEventArgs e)
         {
+            
+        }
 
+        private void RoomAlpha_Click(object sender, RoutedEventArgs e)
+        {
+            
+            
+            uint length = serialPort.BytesToRead(1);
+            int asciiCode = serialPort.ReadByte();   //return single string's ASCII code
+            string resString = AsciiToChar(asciiCode);
+            int i = 1;
+        }
+        public static string AsciiToChar(int asciiCode)
+        {
+            if (asciiCode >= 0 && asciiCode <= 255)
+            {
+                System.Text.ASCIIEncoding asciiEncoding = new System.Text.ASCIIEncoding();
+                byte[] byteArray = new byte[] { (byte)asciiCode };
+                string strCharacter = asciiEncoding.GetString(byteArray);
+                return (strCharacter);
+            }
+            else
+            {
+                throw new Exception("ASCII Code is not valid.");
+            }
         }
     }
 }
