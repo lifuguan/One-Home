@@ -11,23 +11,17 @@ using Windows.UI.Popups;
 
 namespace SerialPort
 {
-   
-
-
-
-
-
-
-
-
-
+ 
     ////////////////////////////////////////////////////////////////////////////
     /// <summary>
     /// Abstracted COM port interface suitable for UWP applications
     /// 使 COM port 适用于UWP应用程序
     /// </summary>
-    public class SerialPort
+    public class SerialPort 
     {
+        
+
+
         ///<summary>
         ///Open port to make a connect
         ///打开串口开始连接
@@ -37,7 +31,7 @@ namespace SerialPort
         ///<param name="parity">type of data parity</param>
         ///<param name="dataBits">Number of data bits</param>
         ///<param name="stopbits">Number of stop</param>
-        public async Task<bool> Open(string portName, uint baudRate = 9600, SerialParity parity = SerialParity.None, ushort dataBits = 8, SerialStopBitCount stopBits = SerialStopBitCount.One)
+        public async Task<bool> Open(string portName, StatusFrame p, uint baudRate = 9600, SerialParity parity = SerialParity.None, ushort dataBits = 8, SerialStopBitCount stopBits = SerialStopBitCount.One)
         {
             //close open port 关闭当前正在打开的串口
             //防止错误覆盖
@@ -77,13 +71,8 @@ namespace SerialPort
                     this.dataReaderObject.InputStreamOptions = InputStreamOptions.Partial;
 
 
-                    //弹出提示框,    此处为了查看是否连接端口
-                    MessageDialog message_dialog = new MessageDialog(portName, "退出");
-                    message_dialog.ShowAsync();   //不加await修饰符, No异步编程
-
-                    StatusFrame statusFrame = new StatusFrame();
-                    statusFrame.PortStatusContral(portName);
-
+                    p.PortName = portName;
+                    
                     // Port is now open
                     this.IsOpen = true;
                 }

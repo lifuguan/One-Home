@@ -25,6 +25,17 @@ namespace SerialPort
     public sealed partial class StatusFrame : Page
     {
         SerialPort serialPort = new SerialPort();
+        private string portName;
+
+        public string PortName
+        {
+            get => portName;
+            set
+            {
+                PortStutas.Text = value;
+            }
+        }
+
         public StatusFrame()
         {
 
@@ -33,7 +44,7 @@ namespace SerialPort
             for (int i = 0; i < 10; i++)
             {
                 portName += i.ToString();
-                serialPort.Open(portName);
+                serialPort.Open(portName,this);   //取地址，不能通过new开辟新内存
                 portName = "COM";
             }
 
@@ -41,24 +52,22 @@ namespace SerialPort
         /// <summary>
         /// 控制显示COM UI的函数
         /// </summary>
-        public void PortStatusContral(string PortName)
-        {
-            PortStutas.Text = PortName;    //问题
-        }
+        
 
 
         private void Hall_Click(object sender, RoutedEventArgs e)
         {
-           
+            int i = 1;
+            MessageDialog message_dialog = new MessageDialog(PortName, "退出");
+            message_dialog.ShowAsync();   //不加await修饰符, No异步编程
         }
 
         private void RoomAlpha_Click(object sender, RoutedEventArgs e)
         {
-            /// <summary>
-            /// Debug专用提示窗
-            /// </summary>           
-            MessageDialog message_dialog = new MessageDialog(ReadDataStream(), "退出");
-            message_dialog.ShowAsync();   //不加await修饰符, No异步编程
+            string ResString = ReadDataStream();
+
+
+
         }
 
 
