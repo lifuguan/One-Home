@@ -25,8 +25,11 @@ namespace SerialPort
     public sealed partial class StatusFrame : Page
     {
         SerialPort serialPort = new SerialPort();
-        private string portName;
 
+        // 声明Timer 
+        private DispatcherTimer _timer;
+
+        private string portName;
         public string PortName
         {
             get => portName;
@@ -48,20 +51,47 @@ namespace SerialPort
                 portName = "COM";
             }
 
+            //设置Timer来定时读取串口
+            _timer = new DispatcherTimer();
+            // Specifies the timer event interval.
+            // Runs here ONE second
+            _timer.Interval = TimeSpan.FromSeconds(1);
+            // indicate execute event
+            _timer.Tick += ProcSerialStream;
+            // Start a timer event
+            _timer.Start();
         }
+
+        #region Process the serial data stream
+        /// <summary>
+        /// 处理数据流
+        /// </summary>
+        private void ProcSerialStream(object sender, object e)
+        {
+            string ResString = ReadDataStream();
+            if(ResString.StartsWith("A")&&ResString.EndsWith(";"))
+            {
+                MessageDialog message_dialog = new MessageDialog(ResString, "退出");
+                message_dialog.ShowAsync();   //不加await修饰符, No异步编程
+            }
+        }
+
+
+
+        #endregion Process the serial data stream
+
+
         /// <summary>
         /// 控制显示COM UI的函数
         /// </summary>
         private void Hall_Click(object sender, RoutedEventArgs e)
         {
-            int i = 1;
-            MessageDialog message_dialog = new MessageDialog(PortName, "退出");
-            message_dialog.ShowAsync();   //不加await修饰符, No异步编程
+
         }
 
         private void RoomAlpha_Click(object sender, RoutedEventArgs e)
         {
-            string ResString = ReadDataStream();
+            
         }
 
 
@@ -106,7 +136,7 @@ namespace SerialPort
                         ////弹出提示框
                         //MessageDialog message_dialog = new MessageDialog(resString, "退出");
                         //message_dialog.ShowAsync();   //不加await修饰符, No异步编程
-                        return resString;
+                        return resString + ";";
                     }
                     else
                     {

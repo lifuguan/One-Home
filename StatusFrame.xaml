@@ -37,7 +37,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Text="火情：" FontSize="20"/>
-                    <TextBlock Grid.Column="1" Text="N/A" FontSize="20"></TextBlock>
+                    <TextBlock Grid.Column="1" Text="N/A" FontSize="20" Name="FireStatus"></TextBlock>
                 </Grid>
                 <Grid Grid.Column="1">
                     <Grid.ColumnDefinitions>
