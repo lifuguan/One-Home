@@ -27,7 +27,7 @@ namespace SerialPort
         SerialPort serialPort = new SerialPort();
         public StatusFrame()
         {
-            
+
             this.InitializeComponent();
             string portName = "COM";
             for (int i = 0; i < 10; i++)
@@ -36,18 +36,23 @@ namespace SerialPort
                 serialPort.Open(portName);
                 portName = "COM";
             }
-            
+
         }
         /// <summary>
         /// 控制显示COM UI的函数
         /// </summary>
         public void PortStatusContral(string PortName)
         {
-            //PortStutas.Text = PortName;    //问题
+            PortStutas.Text = PortName;    //问题
         }
 
 
         private void Hall_Click(object sender, RoutedEventArgs e)
+        {
+           
+        }
+
+        private void RoomAlpha_Click(object sender, RoutedEventArgs e)
         {
             /// <summary>
             /// Debug专用提示窗
@@ -56,11 +61,6 @@ namespace SerialPort
             message_dialog.ShowAsync();   //不加await修饰符, No异步编程
         }
 
-        private void RoomAlpha_Click(object sender, RoutedEventArgs e)
-        {
-                        
-        }
-        
 
 
         /// <summary>
@@ -81,36 +81,39 @@ namespace SerialPort
             }
         }
 
-
-
+        /// <summary>
+        /// 读取完整的字符串流（以 ";" 为分隔符）
+        /// </summary>
         public string ReadDataStream()
         {
             string resString = "";
-            int asciiCode = 0;
+            int asciiCode = 2;
             do
             {
-                uint length = serialPort.BytesToRead(1);
-                asciiCode = serialPort.ReadByte();   //return single string's ASCII code
-
-                if (AsciiToChar(asciiCode) == ";")
+                uint checkPoint = serialPort.BytesToRead(1);   // checkPoint表示缓存区是否还有字节需要读取，以免进入系统报错
+                if (checkPoint != 0)
                 {
-                    /// <summary>
-                    /// Debug专用提示窗
-                    /// </summary>
-                    ////弹出提示框
-                    //MessageDialog message_dialog = new MessageDialog(resString, "退出");
-                    //message_dialog.ShowAsync();   //不加await修饰符, No异步编程
+                    asciiCode = serialPort.ReadByte();   //return single string's ASCII code
 
+                    if (AsciiToChar(asciiCode) == ";")
+                    {
+                        /// <summary>
+                        /// Debug专用提示窗
+                        /// </summary>
+                        ////弹出提示框
+                        //MessageDialog message_dialog = new MessageDialog(resString, "退出");
+                        //message_dialog.ShowAsync();   //不加await修饰符, No异步编程
+                        return resString;
+                    }
+                    else
+                    {
+                        resString += AsciiToChar(asciiCode);
+                    }
+                }
+                else return "";
 
-                    return resString;
-                }
-                else
-                {
-                    resString += AsciiToChar(asciiCode);
-                }
             } while (AsciiToChar(asciiCode) != ";");
             return "";
         }
-
     }
 }
