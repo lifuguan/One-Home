@@ -52,9 +52,6 @@ namespace SerialPort
         /// <summary>
         /// 控制显示COM UI的函数
         /// </summary>
-        
-
-
         private void Hall_Click(object sender, RoutedEventArgs e)
         {
             int i = 1;
@@ -65,9 +62,6 @@ namespace SerialPort
         private void RoomAlpha_Click(object sender, RoutedEventArgs e)
         {
             string ResString = ReadDataStream();
-
-
-
         }
 
 

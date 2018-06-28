@@ -27,11 +27,12 @@ namespace SerialPort
         ///打开串口开始连接
         ///</summary>
         ///<param name="portName">Name of COM port to open</param>
+        ///<param name="pAddress">StaatusFrame类的实例的地址</param>
         ///<param name="baudRate">baud rate of COM port 传输速率</param>
         ///<param name="parity">type of data parity</param>
         ///<param name="dataBits">Number of data bits</param>
         ///<param name="stopbits">Number of stop</param>
-        public async Task<bool> Open(string portName, StatusFrame p, uint baudRate = 9600, SerialParity parity = SerialParity.None, ushort dataBits = 8, SerialStopBitCount stopBits = SerialStopBitCount.One)
+        public async Task<bool> Open(string portName, StatusFrame pAddress, uint baudRate = 9600, SerialParity parity = SerialParity.None, ushort dataBits = 8, SerialStopBitCount stopBits = SerialStopBitCount.One)
         {
             //close open port 关闭当前正在打开的串口
             //防止错误覆盖
@@ -71,7 +72,7 @@ namespace SerialPort
                     this.dataReaderObject.InputStreamOptions = InputStreamOptions.Partial;
 
 
-                    p.PortName = portName;
+                    pAddress.PortName = portName;
                     
                     // Port is now open
                     this.IsOpen = true;
