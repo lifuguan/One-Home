@@ -14,6 +14,8 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using Windows.UI.Popups;
+using System.Net;
+using System.Text;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -35,6 +37,7 @@ namespace SerialPort
             get => portName;
             set
             {
+                portName = value;
                 PortStutas.Text = value;
             }
         }
@@ -62,17 +65,75 @@ namespace SerialPort
             _timer.Start();
         }
 
+        /// <summary>
+        /// 截取的最终数据
+        /// </summary>
+        //温度
+        string Temperature_ = "";
+        //湿度
+        string Humidity_ = "";
+        //火警数据
+        string FireStatus_ = "";
+        //光照
+        string LightStatus_ = "";
+        //红外检测
+        string BodyDetect_ = "";
         #region Process the serial data stream
+
+        
+
         /// <summary>
         /// 处理数据流
         /// </summary>
         private void ProcSerialStream(object sender, object e)
         {
             string ResString = ReadDataStream();
-            if(ResString.StartsWith("A")&&ResString.EndsWith(";"))
+            System.Diagnostics.Debug.WriteLine(ResString);
+            if (ResString.StartsWith("A")&&ResString.EndsWith(";"))
             {
-                MessageDialog message_dialog = new MessageDialog(ResString, "退出");
-                message_dialog.ShowAsync();   //不加await修饰符, No异步编程
+                //测试用语句
+                //MessageDialog message_dialog = new MessageDialog(ResString, "退出");
+                //message_dialog.ShowAsync();   //不加await修饰符, No异步编程
+                string[] SplitData = ResString.Split(' ');
+                
+                if (SplitData.Length == 6)
+                {
+                    int count = 0;
+                    foreach (string data in SplitData)
+                    {
+                        if (count == 1)
+                        {
+                            Temperature_ = data;
+                        }
+                        else if (count == 2)
+                        {
+                            Humidity_ = data;
+                        }
+                        else if (count == 3)
+                        {
+                            FireStatus_ = data;
+                        }
+                        else if (count == 4)
+                        {
+                            LightStatus_ = data;
+                        }
+                        else if (count == 5)
+                        {
+                            BodyDetect_ = data.Substring(0, data.Length - 1);
+
+                        }
+                        else
+                        {
+                        }
+                        count++;
+                    }
+                    int i = 1;
+                }
+                else
+                {
+                    return;
+                }
+                
             }
         }
 
@@ -80,40 +141,7 @@ namespace SerialPort
 
         #endregion Process the serial data stream
 
-
-        /// <summary>
-        /// 控制显示COM UI的函数
-        /// </summary>
-        private void Hall_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void RoomAlpha_Click(object sender, RoutedEventArgs e)
-        {
-            
-        }
-
-
-
-        /// <summary>
-        /// C# ASCIIcode转string符
-        /// </summary>
-        public static string AsciiToChar(int asciiCode)
-        {
-            if (asciiCode >= 0 && asciiCode <= 255)
-            {
-                System.Text.ASCIIEncoding asciiEncoding = new System.Text.ASCIIEncoding();
-                byte[] byteArray = new byte[] { (byte)asciiCode };
-                string strCharacter = asciiEncoding.GetString(byteArray);
-                return (strCharacter);
-            }
-            else
-            {
-                throw new Exception("ASCII Code is not valid.");
-            }
-        }
-
+        #region Read the data stream
         /// <summary>
         /// 读取完整的字符串流（以 ";" 为分隔符）
         /// </summary>
@@ -148,5 +176,42 @@ namespace SerialPort
             } while (AsciiToChar(asciiCode) != ";");
             return "";
         }
+
+        /// <summary>
+        /// C# ASCIIcode转string符
+        /// </summary>
+        public static string AsciiToChar(int asciiCode)
+        {
+            if (asciiCode >= 0 && asciiCode <= 255)
+            {
+                System.Text.ASCIIEncoding asciiEncoding = new System.Text.ASCIIEncoding();
+                byte[] byteArray = new byte[] { (byte)asciiCode };
+                string strCharacter = asciiEncoding.GetString(byteArray);
+                return (strCharacter);
+            }
+            else
+            {
+                throw new Exception("ASCII Code is not valid.");
+            }
+        }
+
+        #endregion Read the data stream
+
+
+        #region Event Contral
+        /// <summary>
+        /// 控制显示COM UI的函数
+        /// </summary>
+        private void Hall_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void RoomAlpha_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        #endregion Event Contral
     }
 }

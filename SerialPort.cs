@@ -187,11 +187,11 @@ namespace SerialPort
                 // Dump exceptions
                 catch
                 {
-                    /// <summary>
-                    /// Debug专用提示窗
-                    /// </summary>           
-                    MessageDialog message_dialog = new MessageDialog("hello bug", "退出");
-                    message_dialog.ShowAsync();   //不加await修饰符, No异步编程
+                    ///// <summary>
+                    ///// Debug专用提示窗
+                    ///// </summary>           
+                    //MessageDialog message_dialog = new MessageDialog("hello bug", "退出");
+                    //message_dialog.ShowAsync();   //不加await修饰符, No异步编程
                 }
             }
         }
