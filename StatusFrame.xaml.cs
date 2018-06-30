@@ -46,38 +46,52 @@ namespace SerialPort
         {
 
             this.InitializeComponent();
-            //string portName = "COM";
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    portName += i.ToString();
-            //    serialPort.Open(portName, this);   //取地址，不能通过new开辟新内存
-            //    portName = "COM";
-            //}
+            string portName = "COM";
+            for (int i = 0; i < 10; i++)
+            {
+                portName += i.ToString();
+                serialPort.Open(portName, this);   //取地址，不能通过new开辟新内存
+                portName = "COM";
+            }
 
-            ////设置Timer来定时读取串口
-            //_timer = new DispatcherTimer();
-            //// Specifies the timer event interval.
-            //// Runs here ONE second
-            //_timer.Interval = TimeSpan.FromSeconds(1);
-            //// indicate execute event
-            //_timer.Tick += ProcSerialStream;
-            //// Start a timer event
-            //_timer.Start();
+            //设置Timer来定时读取串口
+            _timer = new DispatcherTimer();
+            // Specifies the timer event interval.
+            // Runs here ONE second
+            _timer.Interval = TimeSpan.FromSeconds(1);
+            // indicate execute event
+            _timer.Tick += ProcSerialStream;
+            // Start a timer event
+            _timer.Start();
         }
 
         /// <summary>
-        /// 截取的最终数据
+        /// 截取并处理后的最终数据    _H：大厅     _R：房间
         /// </summary>
-        //温度
-        string Temperature_ = "";
-        //湿度
-        string Humidity_ = "";
-        //火警数据
-        string FireStatus_ = "";
-        //光照
-        string LightStatus_ = "";
-        //红外检测
-        string BodyDetect_ = "";
+        //温度_H
+        string Temperature_H = "";
+        //湿度_H
+        string Humidity_H = "";
+        //火警数据_H
+        string FireStatus_H = "";
+        //光照_H
+        string LightStatus_H = "";
+        //红外检测_H
+        string BodyDetect_H = "";
+
+        //温度_R
+        string Temperature_R = "";
+        //湿度_R
+        string Humidity_R = "";
+        //火警数据_R
+        string FireStatus_R = "";
+        //光照_R
+        string LightStatus_R = "";
+        //红外检测_R
+        string BodyDetect_R = "";
+
+
+
 
         #region Process the serial data stream
 
@@ -88,7 +102,7 @@ namespace SerialPort
         {
             string ResString = ReadDataStream();
             System.Diagnostics.Debug.WriteLine(ResString);   //输入到debug日志的信息
-            if (ResString.StartsWith("A") && ResString.EndsWith(";"))
+            if ((ResString.StartsWith("A") || ResString.StartsWith("B")) && ResString.EndsWith(";"))
             {
                 //测试用语句
                 //MessageDialog message_dialog = new MessageDialog(ResString, "退出");
@@ -102,27 +116,27 @@ namespace SerialPort
                     {
                         if (count == 1)
                         {
-                            Temperature_ = data;
-                            Temperature.Text = Temperature_;
+                            Temperature_H = data;
+                            Temperature.Text = Temperature_H;
                         }
                         else if (count == 2)
                         {
-                            Humidity_ = data;
-                            Humidity.Text = Humidity_;
+                            Humidity_H = data;
+                            Humidity.Text = Humidity_H;
                         }
                         else if (count == 3)
                         {
-                            FireStatus_ = data;
-                            FireStatus.Text = FireStatus_;
+                            FireStatus_H = data;
+                            FireStatus.Text = FireStatus_H;
                         }
                         else if (count == 4)
                         {
-                            LightStatus_ = data;
-                            LightStatus.Text = LightStatus_;
+                            LightStatus_H = data;
+                            LightStatus.Text = LightStatus_H;
                         }
                         else if (count == 5)
                         {
-                            BodyDetect_ = data.Substring(0, data.Length - 1);
+                            BodyDetect_H = data.Substring(0, data.Length - 1);
 
                         }
                         else
@@ -130,13 +144,13 @@ namespace SerialPort
                         }
                         count++;
                     }
-                    PostDataAsync(Temperature_, Humidity_, FireStatus_, LightStatus_, BodyDetect_);
+                    PostDataAsync(Temperature_H, Humidity_H, FireStatus_H, LightStatus_H, BodyDetect_H);
                 }
                 else
                 {
                     return;
                 }
-
+              
             }
         }
 
