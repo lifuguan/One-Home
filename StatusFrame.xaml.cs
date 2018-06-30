@@ -103,22 +103,22 @@ namespace SerialPort
                         if (count == 1)
                         {
                             Temperature_ = data;
-                            //Temperature.Text = Temperature_;
+                            Temperature.Text = Temperature_;
                         }
                         else if (count == 2)
                         {
                             Humidity_ = data;
-                            //Humidity.Text = Humidity_;
+                            Humidity.Text = Humidity_;
                         }
                         else if (count == 3)
                         {
                             FireStatus_ = data;
-                            //FireStatus.Text = FireStatus_;
+                            FireStatus.Text = FireStatus_;
                         }
                         else if (count == 4)
                         {
                             LightStatus_ = data;
-                            //LightStatus.Text = LightStatus_;
+                            LightStatus.Text = LightStatus_;
                         }
                         else if (count == 5)
                         {
@@ -130,7 +130,7 @@ namespace SerialPort
                         }
                         count++;
                     }
-                    int i = 1;
+                    PostDataAsync(Temperature_, Humidity_, FireStatus_, LightStatus_, BodyDetect_);
                 }
                 else
                 {
@@ -206,7 +206,7 @@ namespace SerialPort
         /// </summary>
         private void Hall_Click(object sender, RoutedEventArgs e)
         {
-            PostDataAsync("11", "22", "33", "44", "55");
+            
         }
 
         private void RoomAlpha_Click(object sender, RoutedEventArgs e)
