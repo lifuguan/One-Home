@@ -45,7 +45,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Text="温度：" FontSize ="20"/>
-                    <TextBlock Grid.Column="1" Text="N/A" FontSize="20"></TextBlock>
+                    <TextBlock Grid.Column="1" Text="N/A" FontSize="20" Name="Temperature"></TextBlock>
                 </Grid>
             </Grid>
             <Grid Height="46">
@@ -59,7 +59,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Text="湿度：" FontSize="20"/>
-                    <TextBlock Grid.Column="1" Text="N/A" FontSize="20"></TextBlock>
+                    <TextBlock Grid.Column="1" Text="N/A" FontSize="20" Name="Humidity"></TextBlock>
                 </Grid>
                 <Grid Grid.Column="1">
                     <Grid.ColumnDefinitions>
@@ -67,7 +67,7 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Text="光照系数：" FontSize ="20"/>
-                    <TextBlock Grid.Column="1" Text="N/A" FontSize="20"></TextBlock>
+                    <TextBlock Grid.Column="1" Text="N/A" FontSize="20" Name="LightStatus"></TextBlock>
                 </Grid>
             </Grid>
         </StackPanel>
