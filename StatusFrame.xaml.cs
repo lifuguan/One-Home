@@ -42,55 +42,63 @@ namespace SerialPort
             }
         }
 
+        //使页面UI显示指定地点的数据集
+        private enum DataDisplay
+        {
+            Default, RoomHall, RoomAlpha
+        };
+        //使页面UI显示指定地点的控制变量 , 以 Default 为初始值
+        private int DataStatus = (int)DataDisplay.Default;
+
+
+
         public StatusFrame()
         {
 
             this.InitializeComponent();
-            string portName = "COM";
-            for (int i = 0; i < 10; i++)
-            {
-                portName += i.ToString();
-                serialPort.Open(portName, this);   //取地址，不能通过new开辟新内存
-                portName = "COM";
-            }
+            //string portName = "COM";
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    portName += i.ToString();
+            //    serialPort.Open(portName, this);   //取地址，不能通过new开辟新内存
+            //    portName = "COM";
+            //}
 
-            //设置Timer来定时读取串口
-            _timer = new DispatcherTimer();
-            // Specifies the timer event interval.
-            // Runs here ONE second
-            _timer.Interval = TimeSpan.FromSeconds(1);
-            // indicate execute event
-            _timer.Tick += ProcSerialStream;
-            // Start a timer event
-            _timer.Start();
+            ////设置Timer来定时读取串口
+            //_timer = new DispatcherTimer();
+            //// Specifies the timer event interval.
+            //// Runs here ONE second
+            //_timer.Interval = TimeSpan.FromSeconds(1);
+            //// indicate execute event
+            //_timer.Tick += ProcSerialStream;
+            //// Start a timer event
+            //_timer.Start();
         }
 
         /// <summary>
         /// 截取并处理后的最终数据    _H：大厅     _R：房间
         /// </summary>
         //温度_H
-        string Temperature_H = "";
+        private string Temperature_H = "";
         //湿度_H
-        string Humidity_H = "";
+        private string Humidity_H = "";
         //火警数据_H
-        string FireStatus_H = "";
+        private string FireStatus_H = "";
         //光照_H
-        string LightStatus_H = "";
+        private string LightStatus_H = "";
         //红外检测_H
-        string BodyDetect_H = "";
+        private string BodyDetect_H = "";
 
         //温度_R
-        string Temperature_R = "";
+        private string Temperature_R = "";
         //湿度_R
-        string Humidity_R = "";
+        private string Humidity_R = "";
         //火警数据_R
-        string FireStatus_R = "";
+        private string FireStatus_R = "";
         //光照_R
-        string LightStatus_R = "";
+        private string LightStatus_R = "";
         //红外检测_R
-        string BodyDetect_R = "";
-
-
+        private string BodyDetect_R = "";
 
 
         #region Process the serial data stream
@@ -111,50 +119,92 @@ namespace SerialPort
 
                 if (SplitData.Length == 6)
                 {
-                    int count = 0;
-                    foreach (string data in SplitData)
+                    if (ResString.StartsWith("A"))
                     {
-                        if (count == 1)
+                        int count = 0;
+                        foreach (string data in SplitData)
                         {
-                            Temperature_H = data;
-                            Temperature.Text = Temperature_H;
-                        }
-                        else if (count == 2)
-                        {
-                            Humidity_H = data;
-                            Humidity.Text = Humidity_H;
-                        }
-                        else if (count == 3)
-                        {
-                            FireStatus_H = data;
-                            FireStatus.Text = FireStatus_H;
-                        }
-                        else if (count == 4)
-                        {
-                            LightStatus_H = data;
-                            LightStatus.Text = LightStatus_H;
-                        }
-                        else if (count == 5)
-                        {
-                            BodyDetect_H = data.Substring(0, data.Length - 1);
+                            if (count == 1)
+                            {
+                                Temperature_H = data;
+                                Temperature.Text = Temperature_H;
+                            }
+                            else if (count == 2)
+                            {
+                                Humidity_H = data;
+                                Humidity.Text = Humidity_H;
+                            }
+                            else if (count == 3)
+                            {
+                                FireStatus_H = data;
+                                if (int.Parse(FireStatus_H)>=255)
+                                {
+                                    Hall.Background = 
+                                }
+                                FireStatus.Text = FireStatus_H;
+                            }
+                            else if (count == 4)
+                            {
+                                LightStatus_H = data;
+                                LightStatus.Text = LightStatus_H;
+                            }
+                            else if (count == 5)
+                            {
+                                BodyDetect_H = data.Substring(0, data.Length - 1);
 
+                            }
+                            else
+                            {
+                            }
+                            count++;                           
                         }
-                        else
-                        {
-                        }
-                        count++;
+                        PostDataAsync("A", Temperature_H, Humidity_H, FireStatus_H, LightStatus_H, BodyDetect_H);
                     }
-                    PostDataAsync(Temperature_H, Humidity_H, FireStatus_H, LightStatus_H, BodyDetect_H);
+                    else if (ResString.StartsWith("B"))
+                    {
+                        int count = 0;
+                        foreach (string data in SplitData)
+                        {
+                            if (count == 1)
+                            {
+                                Temperature_R = data;
+                                Temperature.Text = Temperature_R;
+                            }
+                            else if (count == 2)
+                            {
+                                Humidity_R = data;
+                                Humidity.Text = Humidity_R;
+                            }
+                            else if (count == 3)
+                            {
+                                FireStatus_R = data;
+                                FireStatus.Text = FireStatus_R;
+                            }
+                            else if (count == 4)
+                            {
+                                LightStatus_R = data;
+                                LightStatus.Text = LightStatus_R;
+                            }
+                            else if (count == 5)
+                            {
+                                BodyDetect_R = data.Substring(0, data.Length - 1);
+
+                            }
+                            else
+                            {
+                            }
+                            count++;                            
+                        }
+                        PostDataAsync("B", Temperature_R, Humidity_R, FireStatus_R, LightStatus_R, BodyDetect_R);
+                    }
                 }
                 else
                 {
                     return;
                 }
-              
+
             }
         }
-
-        
 
         #endregion Process the serial data stream
 
@@ -220,12 +270,12 @@ namespace SerialPort
         /// </summary>
         private void Hall_Click(object sender, RoutedEventArgs e)
         {
-            
+            DataStatus = (int)DataDisplay.RoomHall;
         }
 
         private void RoomAlpha_Click(object sender, RoutedEventArgs e)
         {
-
+            DataStatus = (int)DataDisplay.RoomAlpha;
         }
 
         #endregion Event Contral
@@ -233,11 +283,12 @@ namespace SerialPort
         #region Post Data
 
         private static readonly HttpClient client = new HttpClient();
-        public async void PostDataAsync(string pTemperture, string pHumidity, string pFireStatus, string pLightStatus, string pBodyStatus)
+        public async void PostDataAsync(string Type, string pTemperture, string pHumidity, string pFireStatus, string pLightStatus, string pBodyStatus)
         {
             var values = new Dictionary<string, string>
                 {
                     {"count", "1" },
+                    {"Type_0", Type },
                     {"temperture_0", pTemperture },
                     {"Humidity_0", pHumidity },
                     {"FireStatus_0", pFireStatus },
@@ -258,9 +309,6 @@ namespace SerialPort
                 System.Diagnostics.Debug.WriteLine(ex.Message);
                 throw;
             }
-
-         
-            
         }
         #endregion Post Data
     }
