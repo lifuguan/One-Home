@@ -139,7 +139,7 @@ namespace SerialPort
                                 FireStatus_H = data;
                                 if (int.Parse(FireStatus_H)>=255)
                                 {
-                                    Hall.Background = 
+                                    
                                 }
                                 FireStatus.Text = FireStatus_H;
                             }
