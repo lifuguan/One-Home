@@ -56,23 +56,23 @@ namespace SerialPort
         {
 
             this.InitializeComponent();
-            //string portName = "COM";
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    portName += i.ToString();
-            //    serialPort.Open(portName, this);   //取地址，不能通过new开辟新内存
-            //    portName = "COM";
-            //}
+            string portName = "COM";
+            for (int i = 0; i < 10; i++)
+            {
+                portName += i.ToString();
+                serialPort.Open(portName, this);   //取地址，不能通过new开辟新内存
+                portName = "COM";
+            }
 
-            ////设置Timer来定时读取串口
-            //_timer = new DispatcherTimer();
-            //// Specifies the timer event interval.
-            //// Runs here ONE second
-            //_timer.Interval = TimeSpan.FromSeconds(1);
-            //// indicate execute event
-            //_timer.Tick += ProcSerialStream;
-            //// Start a timer event
-            //_timer.Start();
+            //设置Timer来定时读取串口
+            _timer = new DispatcherTimer();
+            // Specifies the timer event interval.
+            // Runs here ONE second
+            _timer.Interval = TimeSpan.FromSeconds(1);
+            // indicate execute event
+            _timer.Tick += ProcSerialStream;
+            // Start a timer event
+            _timer.Start();
         }
 
         /// <summary>
