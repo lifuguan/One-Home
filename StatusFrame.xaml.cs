@@ -139,7 +139,7 @@ namespace SerialPort
                                 FireStatus_H = data;
                                 if (int.Parse(FireStatus_H)>=255)
                                 {
-                                    
+                                    Hall.Background   = new SolidColorBrush(Windows.UI.Colors.Red);
                                 }
                                 FireStatus.Text = FireStatus_H;
                             }
@@ -179,6 +179,10 @@ namespace SerialPort
                             {
                                 FireStatus_R = data;
                                 FireStatus.Text = FireStatus_R;
+                                if (int.Parse(FireStatus_R) >= 255) 
+                                {
+                                    RoomAlpha.Background = new SolidColorBrush(Windows.UI.Colors.Red);
+                                }
                             }
                             else if (count == 4)
                             {
@@ -270,6 +274,7 @@ namespace SerialPort
         /// </summary>
         private void Hall_Click(object sender, RoutedEventArgs e)
         {
+           
             DataStatus = (int)DataDisplay.RoomHall;
         }
 
