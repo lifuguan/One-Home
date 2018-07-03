@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using System.Net;
 using System.Text;
-using System.Net.Http;
+using Windows.Web.Http;
 
 // https://go.microsoft.com/fwlink/?LinkId=234238 上介绍了“空白页”项模板
 
@@ -57,22 +57,22 @@ namespace SerialPort
 
             this.InitializeComponent();
             string portName = "COM";
-            for (int i = 0; i < 10; i++)
-            {
-                portName += i.ToString();
-                serialPort.Open(portName, this);   //取地址，不能通过new开辟新内存
-                portName = "COM";
-            }
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    portName += i.ToString();
+            //    serialPort.Open(portName, this);   //取地址，不能通过new开辟新内存
+            //    portName = "COM";
+            //}
 
-            //设置Timer来定时读取串口
-            _timer = new DispatcherTimer();
-            // Specifies the timer event interval.
-            // Runs here ONE second
-            _timer.Interval = TimeSpan.FromSeconds(1);
-            // indicate execute event
-            _timer.Tick += ProcSerialStream;
-            // Start a timer event
-            _timer.Start();
+            ////设置Timer来定时读取串口
+            //_timer = new DispatcherTimer();
+            //// Specifies the timer event interval.
+            //// Runs here ONE second
+            //_timer.Interval = TimeSpan.FromSeconds(1);
+            //// indicate execute event
+            //_timer.Tick += ProcSerialStream;
+            //// Start a timer event
+            //_timer.Start();
         }
 
         /// <summary>
@@ -158,7 +158,7 @@ namespace SerialPort
                             }
                             count++;                           
                         }
-                        PostDataAsync("A", Temperature_H, Humidity_H, FireStatus_H, LightStatus_H, BodyDetect_H);
+                        //PostDataAsync("A", Temperature_H, Humidity_H, FireStatus_H, LightStatus_H, BodyDetect_H);
                     }
                     else if (ResString.StartsWith("B"))
                     {
@@ -199,7 +199,7 @@ namespace SerialPort
                             }
                             count++;                            
                         }
-                        PostDataAsync("B", Temperature_R, Humidity_R, FireStatus_R, LightStatus_R, BodyDetect_R);
+                       // PostDataAsync("B", Temperature_R, Humidity_R, FireStatus_R, LightStatus_R, BodyDetect_R);
                     }
                 }
                 else
@@ -276,6 +276,15 @@ namespace SerialPort
         {
            
             DataStatus = (int)DataDisplay.RoomHall;
+
+            this.SendPostMethod("http://115.159.36.210/api/onehome/upload", "A", "11", "22", "33", "44" , "55", (res) =>
+            {
+
+                var response = res;
+
+                System.Diagnostics.Debug.WriteLine(response);
+
+            });
         }
 
         private void RoomAlpha_Click(object sender, RoutedEventArgs e)
@@ -287,9 +296,42 @@ namespace SerialPort
 
         #region Post Data
 
-        private static readonly HttpClient client = new HttpClient();
-        public async void PostDataAsync(string Type, string pTemperture, string pHumidity, string pFireStatus, string pLightStatus, string pBodyStatus)
+        //private static readonly HttpClient client = new HttpClient();
+        //public async void PostDataAsync(string Type, string pTemperture, string pHumidity, string pFireStatus, string pLightStatus, string pBodyStatus)
+        //{
+        //    var values = new Dictionary<string, string>
+        //        {
+        //            {"count", "1" },
+        //            {"Type_0", Type },
+        //            {"temperture_0", pTemperture },
+        //            {"Humidity_0", pHumidity },
+        //            {"FireStatus_0", pFireStatus },
+        //            {"LightStatus_0" ,pLightStatus},
+        //            {"BodyDetect_0", pBodyStatus }
+        //        };
+        //    var content = new FormUrlEncodedContent(values);
+        //    System.Diagnostics.Debug.WriteLine(content.Headers);
+        //    try
+        //    {                
+        //        var response = await client.PostAsync("http://115.159.36.210/api/onehome/upload/", content);
+        //        System.Diagnostics.Debug.WriteLine(response);
+        //        var responseString = response.Content.ReadAsStringAsync();
+        //        System.Diagnostics.Debug.WriteLine(responseString.Result);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        System.Diagnostics.Debug.WriteLine(ex.InnerException);
+        //        System.Diagnostics.Debug.WriteLine(ex.Message);
+        //        throw;
+        //    }
+        //}
+
+
+
+        public async void SendPostMethod(string url,
+            string Type, string pTemperture, string pHumidity, string pFireStatus, string pLightStatus, string pBodyStatus, Action<string> response)
         {
+            HttpClient client = new HttpClient();
             var values = new Dictionary<string, string>
                 {
                     {"count", "1" },
@@ -300,20 +342,23 @@ namespace SerialPort
                     {"LightStatus_0" ,pLightStatus},
                     {"BodyDetect_0", pBodyStatus }
                 };
-            var content = new FormUrlEncodedContent(values);
+            HttpResponseMessage httpResponse = new HttpResponseMessage();
+            System.Diagnostics.Debug.WriteLine(httpResponse);
+            Uri requestUri = new Uri(url);
+            System.Diagnostics.Debug.WriteLine(requestUri);
+            var content = new HttpFormUrlEncodedContent(values);
+            System.Diagnostics.Debug.WriteLine(content);
             try
             {
-                var response = await client.PostAsync("http://115.159.36.210/api/onehome/upload", content);
-                System.Diagnostics.Debug.WriteLine(response);
-                var responseString = response.Content.ReadAsStringAsync();
-                System.Diagnostics.Debug.WriteLine(responseString);
+                httpResponse = await client.PostAsync(requestUri, content);
+
+                response(await httpResponse.Content.ReadAsStringAsync());
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine(ex.InnerException);
                 System.Diagnostics.Debug.WriteLine(ex.Message);
-                throw;
             }
+
         }
         #endregion Post Data
     }
